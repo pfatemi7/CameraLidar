@@ -194,7 +194,7 @@ class CameraLidarFusionSimple:
             # Convert ROS image to OpenCV
             cv_image = self.bridge.imgmsg_to_cv2(image_msg, "bgr8")
         except Exception as e:
-            rospy.logerr(f"Error converting image: {e}")
+            rospy.logerr("Error converting image: %s" % str(e))
             return
         
         if len(points) == 0:
@@ -235,7 +235,7 @@ class CameraLidarFusionSimple:
             debug_image_msg.header = image_msg.header
             self.debug_image_pub.publish(debug_image_msg)
         except Exception as e:
-            rospy.logerr(f"Error publishing debug image: {e}")
+            rospy.logerr("Error publishing debug image: %s" % str(e))
     
     def callback(self, cloud_msg, image_msg, camera_info_msg):
         """Main callback function"""
@@ -253,7 +253,7 @@ class CameraLidarFusionSimple:
             rospy.loginfo(f"Processed cloud with {len(filtered_points)} points")
             
         except Exception as e:
-            rospy.logerr(f"Error in callback: {e}")
+            rospy.logerr("Error in callback: %s" % str(e))
 
 if __name__ == '__main__':
     try:

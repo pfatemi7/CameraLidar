@@ -1,0 +1,15 @@
+<launch>
+  <!-- Camera-LiDAR Fusion Simple Node (No PCL Python bindings required) -->
+  <node pkg="camera_lidar_fusion" type="camera_lidar_fusion_simple.py" name="camera_lidar_fusion_simple" output="screen">
+    <!-- Processing parameters -->
+    <param name="voxel_leaf_size" value="0.03"/>
+    <param name="z_min" value="-0.2"/>
+    <param name="z_max" value="2.5"/>
+  </node>
+
+  <!-- RViz for visualization -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find camera_lidar_fusion)/config/camera_lidar_fusion.rviz"/>
+
+  <!-- Point cloud visualization -->
+  <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot" args="/fused/cloud/header/stamp"/>
+</launch>

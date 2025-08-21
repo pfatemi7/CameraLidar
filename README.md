@@ -157,22 +157,39 @@ You can adjust the following parameters in the launch files:
 
 ### On Jetson (Deployment)
 
-1. **Pull latest changes**:
-   ```bash
-   cd ~/CameraLidar
-   git pull origin main
-   ```
+**Option A: Use the setup script (Recommended)**
+```bash
+# Pull the latest code
+cd ~/CameraLidar
+git pull origin main
 
-2. **Build the workspace**:
-   ```bash
-   cd catkin_ws
-   catkin build
-   source devel/setup.bash
-   ```
+# Run the setup script
+chmod +x setup_jetson.sh
+./setup_jetson.sh
+```
+
+**Option B: Manual setup**
+```bash
+# Pull the latest code
+cd ~/CameraLidar
+git pull origin main
+
+# Install catkin-tools
+sudo apt install python3-catkin-tools
+
+# Build the workspace
+cd catkin_ws
+catkin build
+source devel/setup.bash
+```
 
 3. **Run the system**:
    ```bash
+   # For systems with PCL Python bindings
    roslaunch camera_lidar_fusion camera_lidar_fusion.launch
+   
+   # For systems without PCL Python bindings (recommended for Jetson)
+   roslaunch camera_lidar_fusion camera_lidar_fusion_simple.launch
    ```
 
 ## Troubleshooting
@@ -195,6 +212,12 @@ You can adjust the following parameters in the launch files:
    cd catkin_ws
    catkin clean
    catkin build
+   
+   # If catkin build not found, install catkin-tools
+   sudo apt install python3-catkin-tools
+   
+   # Or use catkin_make as alternative
+   catkin_make
    ```
 
 4. **Python import errors**:

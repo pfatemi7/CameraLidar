@@ -47,6 +47,7 @@ target_link_libraries(camera_lidar_fusion_node
 # Add Python scripts
 catkin_install_python(PROGRAMS
   scripts/camera_lidar_fusion_node.py
+  scripts/camera_lidar_fusion_simple.py
   scripts/calibration_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

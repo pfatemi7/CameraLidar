@@ -1,0 +1,16 @@
+<launch>
+  <!-- Calibration Node -->
+  <node pkg="camera_lidar_fusion" type="calibration_node.py" name="calibration_node" output="screen">
+    <!-- Calibration parameters -->
+    <param name="point_size" value="5"/>
+    <param name="line_thickness" value="2"/>
+  </node>
+
+  <!-- RViz for calibration visualization -->
+  <node pkg="rviz" type="rviz" name="calibration_rviz" args="-d $(find camera_lidar_fusion)/config/calibration.rviz"/>
+
+  <!-- Image viewer for debug image -->
+  <node pkg="image_view" type="image_view" name="debug_image_viewer">
+    <remap from="image" to="/calibration/debug_image"/>
+  </node>
+</launch>

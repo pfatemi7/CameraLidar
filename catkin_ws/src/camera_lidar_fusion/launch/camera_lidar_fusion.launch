@@ -1,0 +1,26 @@
+<launch>
+  <!-- Camera-LiDAR Fusion Node -->
+  <node pkg="camera_lidar_fusion" type="camera_lidar_fusion_node" name="camera_lidar_fusion_node" output="screen">
+    <!-- Processing parameters -->
+    <param name="voxel_leaf_size" value="0.03"/>
+    <param name="z_min" value="-0.2"/>
+    <param name="z_max" value="2.5"/>
+    <param name="sor_mean_k" value="20"/>
+    <param name="sor_std_dev" value="1.0"/>
+  </node>
+
+  <!-- Python version (alternative) -->
+  <!-- <node pkg="camera_lidar_fusion" type="camera_lidar_fusion_node.py" name="camera_lidar_fusion_python" output="screen">
+    <param name="voxel_leaf_size" value="0.03"/>
+    <param name="z_min" value="-0.2"/>
+    <param name="z_max" value="2.5"/>
+    <param name="sor_mean_k" value="20"/>
+    <param name="sor_std_dev" value="1.0"/>
+  </node> -->
+
+  <!-- RViz for visualization -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find camera_lidar_fusion)/config/camera_lidar_fusion.rviz"/>
+
+  <!-- Point cloud visualization -->
+  <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot" args="/fused/cloud/header/stamp"/>
+</launch>

@@ -33,7 +33,9 @@ sudo apt install -y \
     ros-noetic-rqt-plot \
     ros-noetic-geometry-msgs \
     ros-noetic-sensor-msgs \
-    ros-noetic-std-msgs
+    ros-noetic-std-msgs \
+    ros-noetic-tf \
+    ros-noetic-tf2-geometry-msgs
 
 # Install Python dependencies
 echo "🐍 Installing Python dependencies..."

@@ -163,9 +163,13 @@ You can adjust the following parameters in the launch files:
 cd ~/CameraLidar
 git pull origin main
 
-# Run the setup script
-chmod +x setup_jetson.sh
-./setup_jetson.sh
+# Run the minimal setup script (recommended for Jetson)
+chmod +x setup_jetson_minimal.sh
+./setup_jetson_minimal.sh
+
+# Or run the full setup script if you need all features
+# chmod +x setup_jetson_fixed.sh
+# ./setup_jetson_fixed.sh
 ```
 
 **Option B: Manual setup**
@@ -224,6 +228,18 @@ source devel/setup.bash
    ```bash
    # Install missing Python packages
    pip3 install <package-name>
+   ```
+
+5. **Package not found errors**:
+   ```bash
+   # Update package list
+   sudo apt update
+   
+   # Try minimal setup instead
+   ./setup_jetson_minimal.sh
+   
+   # Or install packages manually
+   sudo apt install ros-noetic-cv-bridge ros-noetic-image-transport
    ```
 
 ### Performance Optimization

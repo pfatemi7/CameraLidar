@@ -46,9 +46,9 @@ class TestLidarPublisher:
         cloud_msg.is_dense = True
         
         # Pack points into binary data
-        cloud_msg.data = []
+        cloud_msg.data = b''
         for i in range(num_points):
-            cloud_msg.data.extend(struct.pack('ffff', x[i], y[i], z[i], 1.0))
+            cloud_msg.data += struct.pack('ffff', x[i], y[i], z[i], 1.0)
         
         return cloud_msg
     

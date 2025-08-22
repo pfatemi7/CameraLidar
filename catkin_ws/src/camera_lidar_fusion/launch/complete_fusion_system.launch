@@ -1,0 +1,45 @@
+<launch>
+  <!-- Complete Camera-LiDAR Fusion System with REAL Sensors -->
+  
+  <!-- ZED Camera Node (REAL) -->
+  <include file="$(find zed_wrapper)/launch/zed.launch">
+    <arg name="camera_model" value="zed" />
+    <arg name="base_frame" value="base_link" />
+    <arg name="publish_urdf" value="true" />
+    <arg name="xacro_filename" value="$(find zed_wrapper)/urdf/zed_descr.urdf.xacro" />
+  </include>
+
+  <!-- UniLiDAR Node (REAL) -->
+  <node name="unitree_lidar_ros_node" pkg="unitree_lidar_ros" type="unitree_lidar_ros_node" output="screen">
+    <param name="port" value="/dev/ttyUSB0" />
+    <param name="cloud_topic" value="unilidar/cloud" />
+    <param name="cloud_frame" value="unilidar_lidar" />
+    <param name="imu_topic" value="unilidar/imu" />
+    <param name="imu_frame" value="unilidar_imu" />
+  </node>
+
+  <!-- LiDAR Processing Node -->
+  <node name="lidar_only_node" pkg="camera_lidar_fusion" type="lidar_only_node.py" output="screen" />
+
+  <!-- RViz for Visualization -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find camera_lidar_fusion)/config/camera_lidar_fusion.rviz" output="screen" />
+
+  <!-- Image View for Camera -->
+  <node name="left_image_view" pkg="image_view" type="image_view" output="screen">
+    <remap from="image" to="/zed/left/image_raw" />
+    <param name="window_name" value="ZED Left Camera (REAL)" />
+  </node>
+
+  <node name="right_image_view" pkg="image_view" type="image_view" output="screen">
+    <remap from="image" to="/zed/right/image_raw" />
+    <param name="window_name" value="ZED Right Camera (REAL)" />
+  </node>
+
+  <!-- Web Monitor -->
+  <node name="web_monitor" pkg="camera_lidar_fusion" type="web_monitor.py" output="screen" />
+
+  <!-- TF Static Transform Publisher for LiDAR -->
+  <node name="lidar_tf_publisher" pkg="tf2_ros" type="static_transform_publisher" 
+        args="0 0 0 0 0 0 base_link unilidar_lidar" />
+
+</launch>

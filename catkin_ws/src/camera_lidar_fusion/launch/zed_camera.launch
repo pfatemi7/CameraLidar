@@ -1,0 +1,19 @@
+<launch>
+  <!-- ZED Camera Node -->
+  <node name="zed_camera_node" pkg="camera_lidar_fusion" type="zed_camera_node.py" output="screen">
+    <param name="frame_rate" value="30" />
+    <param name="resolution_width" value="1280" />
+    <param name="resolution_height" value="720" />
+  </node>
+
+  <!-- Image View for debugging -->
+  <node name="left_image_view" pkg="image_view" type="image_view" output="screen">
+    <remap from="image" to="/zed/left/image_raw" />
+    <param name="window_name" value="ZED Left Camera" />
+  </node>
+
+  <node name="right_image_view" pkg="image_view" type="image_view" output="screen">
+    <remap from="image" to="/zed/right/image_raw" />
+    <param name="window_name" value="ZED Right Camera" />
+  </node>
+</launch>

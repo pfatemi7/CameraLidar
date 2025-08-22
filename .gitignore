@@ -1,0 +1,10 @@
+# Build directories
+catkin_ws/build/
+catkin_ws/devel/
+catkin_ws/install/
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile

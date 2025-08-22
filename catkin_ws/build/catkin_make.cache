@@ -1,2 +1,0 @@
-unilidar_sdk/unitree_lidar_ros/src/unitree_lidar_ros:unilidar_sdk/unitree_lidar_ros2/src/unitree_lidar_ros2
--DCATKIN_DEVEL_PREFIX=/home/skyscouter/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/skyscouter/catkin_ws/install -G Unix Makefiles

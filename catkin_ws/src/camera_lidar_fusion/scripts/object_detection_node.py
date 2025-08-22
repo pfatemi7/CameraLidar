@@ -91,37 +91,10 @@ class ObjectDetectionNode:
         try:
             # Extract point cloud data
             points = []
-            point_step = cloud_msg.point_step
-            point_fields = cloud_msg.fields
-            
-            # Find the offset for x, y, z fields
-            x_offset = None
-            y_offset = None
-            z_offset = None
-            
-            for field in point_fields:
-                if field.name == 'x':
-                    x_offset = field.offset
-                elif field.name == 'y':
-                    y_offset = field.offset
-                elif field.name == 'z':
-                    z_offset = field.offset
-            
-            if x_offset is None or y_offset is None or z_offset is None:
-                rospy.logwarn("Point cloud missing x, y, or z fields")
-                return None
-            
-            # Extract points
-            for i in range(0, len(cloud_msg.data), point_step):
-                if i + point_step <= len(cloud_msg.data):
-                    point_data = cloud_msg.data[i:i+point_step]
-                    
-                    # Extract x, y, z values using the correct offsets
-                    x = struct.unpack('f', point_data[x_offset:x_offset+4])[0]
-                    y = struct.unpack('f', point_data[y_offset:y_offset+4])[0]
-                    z = struct.unpack('f', point_data[z_offset:z_offset+4])[0]
-                    
-                    points.append((x, y, z))
+            for i in range(0, len(cloud_msg.data), cloud_msg.point_step):
+                point_data = cloud_msg.data[i:i+cloud_msg.point_step]
+                x, y, z = struct.unpack('fff', point_data[:12])
+                points.append((x, y, z))
             
             if not points:
                 return None

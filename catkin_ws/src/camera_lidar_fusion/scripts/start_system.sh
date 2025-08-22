@@ -4,7 +4,7 @@
 echo "=== Starting Camera-LiDAR Fusion System ==="
 
 # Navigate to workspace
-cd ~/CameraLidar/clean_ws
+cd ~/CameraLidar/catkin_ws
 
 # Source ROS environment
 source devel/setup.bash

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- MAVROS Configuration -->
+    <arg name="fcu_url" default="udp://:14555@" />
+    <arg name="gcs_url" default="" />
+    <arg name="tgt_system" default="1" />
+    <arg name="tgt_component" default="1" />
+    <arg name="log_output" default="screen" />
+    <arg name="fcu_protocol" default="v2.0" />
+    <arg name="respawn_mavros" default="false" />
+
+    <!-- MAVROS Node -->
+    <include file="$(find mavros)/launch/node.launch">
+        <arg name="pluginlists_yaml" value="$(find mavros)/launch/apm_pluginlists.yaml" />
+        <arg name="config_yaml" value="$(find mavros)/launch/apm_config.yaml" />
+        <arg name="fcu_url" value="$(arg fcu_url)" />
+        <arg name="gcs_url" value="$(arg gcs_url)" />
+        <arg name="tgt_system" value="$(arg tgt_system)" />
+        <arg name="tgt_component" value="$(arg tgt_component)" />
+        <arg name="log_output" value="$(arg log_output)" />
+        <arg name="fcu_protocol" value="$(arg fcu_protocol)" />
+        <arg name="respawn_mavros" value="$(arg respawn_mavros)" />
+    </include>
+
+    <!-- Test MAVROS Obstacle Node -->
+    <node name="test_mavros_node" pkg="camera_lidar_fusion" type="test_mavros_integration.py" output="screen">
+        <!-- This node publishes test obstacle data -->
+    </node>
+
+    <!-- Optional: RViz for visualization -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find camera_lidar_fusion)/config/mavros_integration.rviz" output="screen" />
+
+</launch>

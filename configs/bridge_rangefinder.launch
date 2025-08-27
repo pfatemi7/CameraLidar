@@ -1,0 +1,32 @@
+<launch>
+  <!-- MAVROS APM Launch -->
+  <include file="$(find mavros)/launch/apm.launch">
+    <arg name="fcu_url" value="/dev/ttyTHS1:57600"/>
+  </include>
+
+  <!-- Camera-LiDAR Fusion System -->
+  <include file="$(find camera_lidar_fusion)/launch/enhanced_system_jetson.launch"/>
+
+  <!-- PointCloud to LaserScan Converter -->
+  <node pkg="mavprox_bridge" type="pointcloud_to_laserscan_simple" name="pointcloud_to_laserscan_simple" output="screen">
+    <param name="target_frame" value="base_link"/>
+    <param name="min_height" value="-0.5"/>
+    <param name="max_height" value="2.0"/>
+    <param name="angle_min" value="-3.14159"/>
+    <param name="angle_max" value="3.14159"/>
+    <param name="angle_increment" value="0.0174533"/>
+    <param name="range_min" value="0.1"/>
+    <param name="range_max" value="50.0"/>
+    <param name="scan_time" value="0.1"/>
+  </node>
+
+  <!-- Scan to Rangefinder Bridge (for Mission Planner) -->
+  <node pkg="mavprox_bridge" type="scan_to_rangefinder" name="scan_to_rangefinder" output="screen">
+    <param name="num_bins" value="72"/>
+    <param name="min_distance" value="0.1"/>
+    <param name="max_distance" value="50.0"/>
+    <param name="angle_increment" value="5.0"/>
+    <param name="angle_offset" value="0.0"/>
+  </node>
+
+</launch>

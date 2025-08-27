@@ -1,30 +1,323 @@
-# Build directories
+# ROS
+*.pyc
+*.pyo
+__pycache__/
+*.so
+*.a
+*.o
+*.la
+*.lo
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+
+# Catkin
 catkin_ws/build/
 catkin_ws/devel/
 catkin_ws/install/
+catkin_ws/.catkin_workspace
+catkin_ws/src/.rosinstall
 
-# CMake files
-CMakeCache.txt
-CMakeFiles/
-cmake_install.cmake
-Makefile
+# ROS logs
+*.log
+logs/
+ros_logs/
 
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-
-# IDE files
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
-# OS files
+# OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
-
-# Log files
-*.log
 
 # Temporary files
 *.tmp
 *.temp
+*.bak
+*.backup
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Python
+*.pyc
+*.pyo
+__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Data files (large sensor data)
+*.bag
+*.pcd
+*.ply
+*.xyz
+*.csv
+*.dat
+*.bin
+
+# Calibration files (user-specific)
+calibration_*.yaml
+calibration_*.json
+*.cal
+
+# SSH keys and sensitive data
+*.pem
+*.key
+id_rsa*
+known_hosts
+
+# Jetson specific
+*.tegra
+*.jetson
+
+# Backup files
+*.orig
+*.rej
+
+# Documentation build
+docs/_build/
+docs/build/
+
+# Package manager
+package-lock.json
+yarn.lock
+Pipfile.lock
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# Compiled Object files
+*.slo
+*.lai
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.x
+
+# ROS bag files (can be large)
+*.bag
+*.bag.active
+
+# ROS parameter files (user-specific)
+*.yaml
+!configs/*.yaml
+!catkin_ws/src/*/config/*.yaml
+
+# Launch files (user-specific)
+*.launch
+!configs/*.launch
+!catkin_ws/src/*/launch/*.launch
+
+# RViz config files (user-specific)
+*.rviz
+!catkin_ws/src/*/config/*.rviz
+
+# URDF files (user-specific)
+*.urdf
+*.xacro
+!catkin_ws/src/*/urdf/*.urdf
+!catkin_ws/src/*/urdf/*.xacro
+
+# World files (user-specific)
+*.world
+!catkin_ws/src/*/worlds/*.world
+
+# Mesh files (can be large)
+*.dae
+*.stl
+*.obj
+!catkin_ws/src/*/meshes/*.dae
+!catkin_ws/src/*/meshes/*.stl
+!catkin_ws/src/*/meshes/*.obj
+
+# Texture files (can be large)
+*.png
+*.jpg
+*.jpeg
+*.tiff
+*.bmp
+!catkin_ws/src/*/textures/*.png
+!catkin_ws/src/*/textures/*.jpg
+!catkin_ws/src/*/textures/*.jpeg
+!catkin_ws/src/*/textures/*.tiff
+!catkin_ws/src/*/textures/*.bmp
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache directories
+.cache/
+cache/
+
+# Temporary directories
+tmp/
+temp/
+
+# User-specific configuration
+config/local/
+config/user/
+*.local.yaml
+*.user.yaml
+
+# Test coverage
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# Profiling data
+*.prof
+*.lprof
+
+# Memory dumps
+*.core
+*.dump
+
+# System files
+.fuse_hidden*
+.nfs*
+
+# Network
+*.pcap
+*.cap
+
+# Archives
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Compiled source
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages
+*.deb
+*.rpm
+*.msi
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port

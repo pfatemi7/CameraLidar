@@ -138,7 +138,7 @@ camera-lidar-fusion/
    - Check for background processes
 
 ### Debug Commands
-```bash
+   ```bash
 # Check system status
 ./scripts/run_prox_demo.sh
 

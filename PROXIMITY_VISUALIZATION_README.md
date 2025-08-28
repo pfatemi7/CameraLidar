@@ -39,14 +39,28 @@ source devel/setup.bash
 
 ### 2. Run the Visualization System
 
+#### Option A: Jetson Only (No Display)
 ```bash
-roslaunch mavprox_bridge proximity_viz.launch
+roslaunch mavprox_bridge proximity_viz_jetson.launch
 ```
 
 This will start:
 - L1 TF Publisher (orientation correction)
 - Proximity Visualizer (360° ring visualization)
-- RViz with optimized configuration
+- **Note**: RViz is not included since Jetson typically doesn't have a display
+
+#### Option B: Local RViz with Jetson Data
+1. **On Jetson**: Run the Jetson launch file
+   ```bash
+   roslaunch mavprox_bridge proximity_viz_jetson.launch
+   ```
+
+2. **On Local Machine**: Run RViz connected to Jetson
+   ```bash
+   ./scripts/run_rviz_local.sh
+   ```
+
+This allows you to visualize the proximity data from Jetson on your local machine's display.
 
 ## ⚙️ Configuration
 

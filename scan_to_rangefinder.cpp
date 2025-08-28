@@ -26,14 +26,22 @@ private:
     double angle_increment_;
     double angle_offset_;
     
+    // New filtering parameters
+    double min_range_;  // Minimum range to publish (default 1.0m)
+    double max_range_;  // Maximum range to publish (default 5.0m)
+    
 public:
     ScanToRangefinderBridge() : nh_("~") {
         // Initialize parameters
         num_bins_ = 72;  // 5° each from 0° to 360°
-        min_distance_ = 0.1;  // 10cm minimum
-        max_distance_ = 50.0;  // 50m maximum
+        min_distance_ = 0.1;  // 10cm minimum (for sensor validation)
+        max_distance_ = 50.0;  // 50m maximum (for sensor validation)
         angle_increment_ = 5.0;  // 5 degrees per bin
         angle_offset_ = 0.0;  // 0° forward
+        
+        // Initialize filtering parameters
+        min_range_ = 1.0;  // Default: ignore readings closer than 1.0m
+        max_range_ = 5.0;  // Default: treat readings >5.0m as no obstacle
         
         // Get parameters from parameter server
         nh_.param("num_bins", num_bins_, num_bins_);
@@ -41,6 +49,10 @@ public:
         nh_.param("max_distance", max_distance_, max_distance_);
         nh_.param("angle_increment", angle_increment_, angle_increment_);
         nh_.param("angle_offset", angle_offset_, angle_offset_);
+        
+        // Get filtering parameters
+        nh_.param("min_range", min_range_, min_range_);
+        nh_.param("max_range", max_range_, max_range_);
         
         // Setup subscribers and publishers
         scan_sub_ = nh_.subscribe("/scan", 1, &ScanToRangefinderBridge::scanCallback, this);
@@ -55,14 +67,46 @@ public:
         ROS_INFO("Publishing to: /mavros/obstacle/send");
         ROS_INFO("Parameters: bins=%d, min=%.1fm, max=%.1fm, inc=%.1f°, offset=%.1f°", 
                  num_bins_, min_distance_, max_distance_, angle_increment_, angle_offset_);
+        ROS_INFO("Filtering: min_range=%.1fm, max_range=%.1fm (only publishing 1.0-5.0m range)", 
+                 min_range_, max_range_);
     }
     
     void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_msg) {
         // Convert scan data to 72 bins
         std::vector<double> binned_distances(num_bins_, std::numeric_limits<double>::infinity());
         
+        // Statistics for logging
+        int total_points = 0;
+        int skipped_too_close = 0;
+        int skipped_too_far = 0;
+        int skipped_invalid = 0;
+        int valid_filtered_points = 0;
+        
         // Map scan angles to bins
         for (size_t i = 0; i < scan_msg->ranges.size(); ++i) {
+            total_points++;
+            double range = scan_msg->ranges[i];
+            
+            // Check if range is valid from sensor perspective (use sensor's own min/max)
+            if (range < scan_msg->range_min || range > scan_msg->range_max) {
+                skipped_invalid++;
+                continue;
+            }
+            
+            // Apply filtering: ignore readings outside our desired range
+            if (range < min_range_) {
+                skipped_too_close++;
+                continue;
+            }
+            
+            if (range > max_range_) {
+                skipped_too_far++;
+                continue;
+            }
+            
+            // Range is valid and within our filtering bounds
+            valid_filtered_points++;
+            
             double angle = scan_msg->angle_min + i * scan_msg->angle_increment;
             
             // Normalize angle to 0-360°
@@ -80,15 +124,16 @@ public:
             // Find corresponding bin
             int bin = static_cast<int>(angle_deg / angle_increment_) % num_bins_;
             
-            // Update bin with minimum distance
-            double range = scan_msg->ranges[i];
-            if (range >= scan_msg->range_min && range <= scan_msg->range_max && 
-                range >= min_distance_ && range <= max_distance_) {
-                if (binned_distances[bin] > range) {
-                    binned_distances[bin] = range;
-                }
+            // Update bin with minimum distance (only valid filtered ranges)
+            if (binned_distances[bin] > range) {
+                binned_distances[bin] = range;
             }
         }
+        
+        // Log filtering statistics
+        ROS_INFO("Filtering stats: total=%d, too_close(<%.1fm)=%d, too_far(>%.1fm)=%d, invalid=%d, valid_filtered=%d", 
+                 total_points, min_range_, skipped_too_close, max_range_, skipped_too_far, 
+                 skipped_invalid, valid_filtered_points);
         
         // Publish closest distance as Range message to MAVROS rangefinder
         sensor_msgs::Range range_msg;
@@ -96,11 +141,11 @@ public:
         range_msg.header.frame_id = "base_link";
         range_msg.radiation_type = sensor_msgs::Range::INFRARED;
         range_msg.field_of_view = 0.1;  // 0.1 radians
-        range_msg.min_range = min_distance_;
-        range_msg.max_range = max_distance_;
+        range_msg.min_range = min_range_;  // Use filtered min range
+        range_msg.max_range = max_range_;  // Use filtered max range
         
-        // Find closest distance
-        double closest_distance = max_distance_;
+        // Find closest distance from filtered data
+        double closest_distance = max_range_;  // Default to max range if no valid readings
         for (int i = 0; i < num_bins_; ++i) {
             if (!std::isinf(binned_distances[i]) && binned_distances[i] < closest_distance) {
                 closest_distance = binned_distances[i];
@@ -130,15 +175,15 @@ public:
         obstacle_msg.angle_increment = angle_increment_ * M_PI / 180.0;  // Convert degrees to radians
         obstacle_msg.time_increment = 0.0;
         obstacle_msg.scan_time = 0.1;  // 10 Hz
-        obstacle_msg.range_min = min_distance_;
-        obstacle_msg.range_max = max_distance_;
+        obstacle_msg.range_min = min_range_;  // Use filtered min range
+        obstacle_msg.range_max = max_range_;  // Use filtered max range
         
         // Convert binned distances to ranges array
         obstacle_msg.ranges.resize(num_bins_);
         obstacle_msg.intensities.resize(num_bins_);
         for (int i = 0; i < num_bins_; ++i) {
             if (std::isinf(binned_distances[i])) {
-                obstacle_msg.ranges[i] = max_distance_;  // No reading = max distance
+                obstacle_msg.ranges[i] = max_range_;  // No reading = max range (no obstacle)
             } else {
                 obstacle_msg.ranges[i] = binned_distances[i];
             }

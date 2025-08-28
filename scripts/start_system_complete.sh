@@ -43,9 +43,9 @@ if ! pgrep -x "roscore" > /dev/null; then
 fi
 echo "✅ ROS master started"
 
-# Start the complete system
-echo "🚀 Launching complete Camera-LiDAR fusion system..."
-roslaunch camera_lidar_fusion complete_system_final.launch &
+# Start the complete system with MAVROS bridge and filtering
+echo "🚀 Launching complete Camera-LiDAR fusion system with MAVROS bridge..."
+roslaunch mavprox_bridge bridge_distance_sensor_final.launch &
 LAUNCH_PID=$!
 
 # Wait for system to initialize

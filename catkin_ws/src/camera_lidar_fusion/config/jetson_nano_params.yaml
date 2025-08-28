@@ -1,0 +1,142 @@
+# Jetson Nano Configuration Parameters
+# Optimized for 4GB RAM, 128 CUDA cores, ARM64 architecture
+
+# Enhanced Filtering Node Parameters
+enhanced_filtering_node:
+  # Adaptive Voxel Grid (Conservative for Nano)
+  base_voxel_size: 0.08  # meters (increased for performance)
+  max_voxel_size: 0.20   # meters
+  min_voxel_size: 0.05   # meters
+  density_threshold: 50  # points per voxel (reduced for memory efficiency)
+  
+  # Multi-resolution voxel grid (Conservative)
+  distance_ranges: [1.0, 3.0, 8.0, 15.0]  # meters
+  voxel_sizes: [0.05, 0.08, 0.12, 0.18]   # meters
+  
+  # RANSAC Ground Plane Detection
+  ransac_threshold: 0.15      # meters (increased tolerance)
+  ransac_min_samples: 3
+  ransac_max_trials: 500      # reduced for performance
+  ground_angle_threshold: 20.0  # degrees
+  
+  # Enhanced Outlier Detection (Conservative)
+  radius_outlier_radius: 0.8           # meters (increased radius)
+  radius_outlier_min_neighbors: 8      # reduced neighbors
+  statistical_outlier_k: 15            # reduced k
+  statistical_outlier_std: 1.5         # increased tolerance
+  
+  # Temporal Consistency (Reduced for performance)
+  temporal_window_size: 3              # reduced window
+  temporal_consistency_threshold: 0.15 # meters
+  
+  # Cluster-based Filtering (Conservative)
+  cluster_eps: 0.5           # meters (increased eps)
+  cluster_min_samples: 3     # reduced samples
+  min_cluster_size: 8        # reduced cluster size
+  
+  # ROI Filtering
+  camera_fov_horizontal: 90.0  # degrees
+  camera_fov_vertical: 60.0    # degrees
+  max_distance: 15.0           # meters (reduced max distance)
+
+# Enhanced Calibration Node Parameters
+enhanced_calibration_node:
+  # Calibration parameters (Conservative for Nano)
+  checkerboard_size: [7, 5]    # smaller board
+  square_size: 0.06            # meters
+  min_targets: 8               # reduced minimum targets
+  max_targets: 25              # reduced maximum targets
+  calibration_timeout: 180     # seconds (reduced timeout)
+  
+  # Target detection parameters
+  min_corner_quality: 0.05     # reduced quality threshold
+  max_corner_distance: 0.15    # meters
+  target_stability_threshold: 0.03  # meters
+  
+  # Circle grid parameters
+  circle_grid_size: [3, 9]     # smaller grid
+
+# Object Detection and Tracking Node Parameters
+object_detection_tracking_node:
+  # Object detection parameters (Conservative)
+  confidence_threshold: 0.6    # increased threshold
+  nms_threshold: 0.5
+  min_object_size: 80          # increased minimum size
+  max_object_size: 800         # reduced maximum size
+  
+  # Object tracking parameters
+  tracking_max_distance: 2.5   # meters
+  tracking_max_age: 20         # reduced max age
+  tracking_min_hits: 2         # reduced min hits
+  
+  # 3D projection parameters
+  projection_cone_angle: 20.0  # degrees (increased angle)
+  min_projection_points: 8     # reduced points
+  max_projection_distance: 15.0  # meters (reduced distance)
+  
+  # Target classes (Reduced for performance)
+  target_classes: ['person', 'car']
+
+# Performance Monitor Node Parameters
+performance_monitor_node:
+  # Performance thresholds (Conservative for Nano)
+  target_fps: 3.0              # reduced target FPS
+  max_processing_time: 0.3     # seconds (increased max time)
+  max_memory_usage: 75.0       # percentage (reduced memory threshold)
+  max_cpu_usage: 85.0          # percentage (reduced CPU threshold)
+
+# System-wide Jetson Nano Optimizations
+jetson_nano_optimizations:
+  # Memory management
+  max_point_cloud_size: 50000  # maximum points to process
+  enable_frame_skipping: true  # skip frames when overloaded
+  frame_skip_threshold: 0.4    # seconds (skip if processing > 0.4s)
+  
+  # Threading optimization
+  max_threads: 4               # limit threads for Nano
+  enable_multithreading: true  # enable multithreading
+  
+  # GPU optimization
+  enable_gpu_acceleration: false  # disable GPU for stability
+  cuda_memory_fraction: 0.3    # limit GPU memory usage
+  
+  # Quality vs Performance trade-offs
+  quality_mode: "balanced"     # options: "performance", "balanced", "quality"
+  
+  # Adaptive processing
+  enable_adaptive_processing: true
+  adaptive_threshold_cpu: 80.0    # percentage
+  adaptive_threshold_memory: 70.0 # percentage
+  
+  # Logging and monitoring
+  enable_performance_logging: true
+  log_interval: 10             # seconds
+  max_log_size: 100           # MB
+
+# Hardware-specific parameters
+hardware_config:
+  # Jetson Nano specific
+  architecture: "arm64"
+  cpu_cores: 4
+  gpu_cores: 128
+  total_memory: 4096           # MB
+  gpu_memory: 512              # MB
+  
+  # Sensor configurations
+  zed_camera:
+    resolution: "VGA"          # 640x480 for performance
+    frame_rate: 15             # reduced frame rate
+    enable_depth: true
+    enable_point_cloud: false  # disable for performance
+    
+  unilidar:
+    baud_rate: 115200
+    frame_rate: 10             # reduced frame rate
+    enable_imu: false          # disable for performance
+
+# Fallback parameters (if enhanced features fail)
+fallback_config:
+  enable_fallback_mode: true
+  fallback_voxel_size: 0.1     # meters
+  fallback_max_points: 10000   # maximum points
+  fallback_processing_time: 0.5 # seconds

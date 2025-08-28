@@ -1,0 +1,74 @@
+<launch>
+  <!-- Full Enhanced Camera-LiDAR Fusion System for Jetson Nano -->
+  <!-- Uses manual implementations of advanced algorithms without external dependencies -->
+  
+  <!-- ZED Camera Node -->
+  <node name="zed_camera_node" pkg="camera_lidar_fusion" type="zed_camera_node.py" output="screen" />
+
+  <!-- UniLiDAR Node -->
+  <node name="unitree_lidar_ros_node" pkg="unitree_lidar_ros" type="unitree_lidar_ros_node" output="screen">
+    <param name="port" value="/dev/ttyUSB0" />
+    <param name="cloud_topic" value="unilidar/cloud" />
+    <param name="cloud_frame" value="unilidar_lidar" />
+    <param name="imu_topic" value="unilidar/imu" />
+    <param name="imu_frame" value="unilidar_imu" />
+  </node>
+
+  <!-- Basic LiDAR Processing Node -->
+  <node name="lidar_only_node" pkg="camera_lidar_fusion" type="lidar_only_node.py" output="screen">
+    <!-- Optimized parameters for Jetson Nano -->
+    <param name="z_min" value="-0.2" />
+    <param name="z_max value="10.0" />
+    <param name="max_points" value="50000" />  <!-- Limit points for Nano -->
+  </node>
+
+  <!-- Calibrated Fusion Node -->
+  <node name="calibrated_fusion_node" pkg="camera_lidar_fusion" type="calibrated_fusion_node.py" output="screen">
+    <!-- Calibration parameters -->
+    <param name="lidar_to_camera_x" value="0.0" />
+    <param name="lidar_to_camera_y" value="0.0" />
+    <param name="lidar_to_camera_z" value="0.1" />
+    <param name="camera_fov_horizontal" value="90.0" />
+    <param name="camera_fov_vertical" value="60.0" />
+    <!-- Optimized detection parameters -->
+    <param name="min_area" value="800" />  <!-- Increased for performance -->
+    <param name="max_area" value="80000" /> <!-- Reduced for performance -->
+  </node>
+
+  <!-- Enhanced Filtering Manual Node (Full Implementation) -->
+  <node name="enhanced_filtering_manual" pkg="camera_lidar_fusion" type="enhanced_filtering_manual.py" output="screen">
+    <!-- Enhanced filtering parameters -->
+    <param name="voxel_size" value="0.05" />
+    <param name="z_min" value="-0.2" />
+    <param name="z_max value="10.0" />
+    <param name="max_points" value="30000" />  <!-- Conservative for Nano -->
+    <param name="ground_threshold" value="0.1" />
+    <param name="outlier_radius" value="0.1" />
+    <param name="min_neighbors" value="3" />  <!-- Reduced for performance -->
+    <param name="ransac_threshold" value="0.05" />
+    <param name="ransac_max_iterations" value="50" />  <!-- Reduced for performance -->
+  </node>
+
+  <!-- Distance Monitor Node -->
+  <node name="distance_monitor_node" pkg="camera_lidar_fusion" type="distance_monitor_node.py" output="screen">
+    <param name="warning_distance" value="0.9" />
+    <param name="danger_distance" value="0.5" />
+  </node>
+
+  <!-- TF Static Transform Publisher for LiDAR -->
+  <node name="lidar_tf_publisher" pkg="tf2_ros" type="static_transform_publisher" 
+        args="0 0 0 0 0 0 base_link unilidar_lidar" />
+
+  <!-- RViz for Visualization -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find camera_lidar_fusion)/config/enhanced_fusion_jetson.rviz" output="screen" />
+
+  <!-- Image View for Camera (reduced resolution for performance) -->
+  <node name="left_image_view" pkg="image_view" type="image_view" output="screen">
+    <remap from="image" to="/zed/left/image_raw" />
+    <param name="window_name" value="ZED Left Camera" />
+  </node>
+
+  <!-- Web Monitor -->
+  <node name="web_monitor" pkg="camera_lidar_fusion" type="web_monitor.py" output="screen" />
+
+</launch>

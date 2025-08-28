@@ -15,7 +15,7 @@ class ScanToRangefinderBridge {
 private:
     ros::NodeHandle nh_;
     ros::Subscriber scan_sub_;
-    ros::Publisher rangefinder_pub_;
+    ros::Publisher distance_sensor_pub_;
     ros::Publisher distances_pub_;
     ros::Publisher obstacle_send_pub_;  // New publisher for obstacle/send
     
@@ -56,14 +56,14 @@ public:
         
         // Setup subscribers and publishers
         scan_sub_ = nh_.subscribe("/scan", 1, &ScanToRangefinderBridge::scanCallback, this);
-        // Publish to MAVROS distance_sensor topic that ArduPilot expects
-        rangefinder_pub_ = nh_.advertise<sensor_msgs::Range>("/mavros/distance_sensor/rangefinder_pub", 1);
+        // Publish to MAVROS distance_sensor topic that ArduPilot expects for proximity detection
+        distance_sensor_pub_ = nh_.advertise<sensor_msgs::Range>("/mavros/distance_sensor/distance_sensor", 1);
         distances_pub_ = nh_.advertise<std_msgs::Float32MultiArray>("/mavros/obstacle/distances", 1);
-        obstacle_send_pub_ = nh_.advertise<sensor_msgs::LaserScan>("/mavros/obstacle/send", 1);  // New publisher
+        obstacle_send_pub_ = nh_.advertise<sensor_msgs::LaserScan>("/mavros/obstacle/send", 1);  // For Mission Planner proximity
         
-        ROS_INFO("Scan to Rangefinder Bridge initialized");
+        ROS_INFO("Scan to Distance Sensor Bridge initialized");
         ROS_INFO("Subscribing to: /scan");
-        ROS_INFO("Publishing to: /mavros/distance_sensor/rangefinder_pub");
+        ROS_INFO("Publishing to: /mavros/distance_sensor/distance_sensor");
         ROS_INFO("Publishing to: /mavros/obstacle/send");
         ROS_INFO("Parameters: bins=%d, min=%.1fm, max=%.1fm, inc=%.1f°, offset=%.1f°", 
                  num_bins_, min_distance_, max_distance_, angle_increment_, angle_offset_);
@@ -135,7 +135,7 @@ public:
                  total_points, min_range_, skipped_too_close, max_range_, skipped_too_far, 
                  skipped_invalid, valid_filtered_points);
         
-        // Publish closest distance as Range message to MAVROS rangefinder
+        // Publish closest distance as Range message to MAVROS distance sensor
         sensor_msgs::Range range_msg;
         range_msg.header.stamp = ros::Time::now();
         range_msg.header.frame_id = "base_link";
@@ -152,7 +152,7 @@ public:
             }
         }
         range_msg.range = closest_distance;
-        rangefinder_pub_.publish(range_msg);
+        distance_sensor_pub_.publish(range_msg);
         
         // Publish all distances as Float32MultiArray
         std_msgs::Float32MultiArray distances_msg;
